@@ -1,0 +1,14 @@
+// a get request 
+// GET http://localhost:3000/api.http
+GET http://localhost:3000/
+
+### Response
+// Status: 200 OK
+// Content-Type: application/json
+{
+  "message": "Hello World"
+}
+###
+GET http://localhost:3000/json
+###
+GET http://localhost:3000/html
