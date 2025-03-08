@@ -1,2 +1,6 @@
-var foo = require('./index.js');
- foo(); // logs out : "a function in file foo"
+define(['exports'], function (exports) {
+    var bar = exports.log = function () {
+        console.log('bar.log was called');
+    };
+ });
+ 
