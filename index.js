@@ -1,35 +1,9 @@
-// create an express server
-    const express = require('express');
-    const app = express();    
-    const port = 5001;
-    var serveStatic = require('serve-static');
-    app.use(express.json());
-    app.use(express.urlencoded({ extended: true }));
-    app.use(serveStatic(__dirname + '/public'))
-            
-    /*const mytodo= [{
-        id: 1,
-        title: "My first todo",
-        completed: false
-    }];
-    // another route for json response
-        app.get("/", (req, res) => {
-            res.json(mytodo);
+
+        var EventEmitter = require('events').EventEmitter;
+        var emitter = new EventEmitter();
+        // Subscribe
+        emitter.on('foo', function (arg1, arg2) {
+           console.log('Foo raised, Args:', arg1, arg2);
         });
-    
-    // put route
-        app.put("/", (req, res) => {
-            const body=req.body;
-            newtodo=body.title;
-            mytodo.title=newtodo;
-            console.log(newtodo);
-            res.json(mytodo);
-        }
-    );
-        app.get('/html', (req, res) => {
-            res.sendFile(__dirname + '/main.html');
-            });
-        // make the server listen to requests
-        app.listen(port);
-        */
-    
+        // Emit
+        emitter.emit('foo', { a: 123 }, { b: 456 });
