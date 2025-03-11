@@ -1,5 +1,5 @@
 // create an express server
-   /* const express = require('express');
+    const express = require('express');
     const app = express();    
     const port = 5001;
     var serveStatic = require('serve-static');
@@ -33,7 +33,3 @@
         app.listen(port);
         */
     
-        module.exports = function () {
-            console.log('a function in file foo');
-         };
-         
