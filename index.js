@@ -1,22 +1,52 @@
-var http = require('http');
-var fs=require('fs');
+const http = require('http');
+const fs = require('fs');
+const path = require('path');
 
-function send404Response(response){
-    response.writeHead(404,{"Content-Type":"text/plain"});
-    response.write("Error 404: Page not found!");
-    response.end();
+function send404Response(res) {
+    res.writeHead(404, { "Content-Type": "text/plain" });
+    res.write("Error 404: Page not found!");
+    res.end();
 }
 
-var server = http.createServer(function (req, res) {
-   console.log('request starting...');
-   if (req.method === 'GET' && req.url === '/'){
-         res.writeHead(200, {'Content-Type': 'text/html'});
-         fs.createReadStream('./index.html').pipe(res);
-    }
-    else{
+const mimeLookup = {
+    '.js': 'application/javascript',
+    '.html': 'text/html',
+    '.css': 'text/css'
+};
+
+const server = http.createServer((req, res) => {
+    console.log('Request received:', req.url);
+
+    if (req.method === 'GET') {
+        let fileurl = req.url;
+        if (fileurl === '/') fileurl = '/index.html'; // Default file
+        let filepath = path.resolve(__dirname, 'public' + fileurl); // Serve from "public" folder
+
+        let fileExt = path.extname(filepath);
+        let mimeType = mimeLookup[fileExt];
+
+        if (!mimeType) {
+            send404Response(res);
+            return;
+        }
+
+        // Check if file exists
+        fs.access(filepath, fs.constants.F_OK, (err) => {
+            if (err) {
+                console.log(`File not found: ${filepath}`);
+                send404Response(res);
+                return;
+            }
+
+            res.writeHead(200, { 'Content-Type': mimeType });
+            fs.createReadStream(filepath).pipe(res);
+        });
+    } else {
         send404Response(res);
     }
-
 });
-server.listen(3005);
-console.log('Server running at http://127.0.0.1:3005/');
+
+// Start server on port 3006
+server.listen(3006, () => {
+    console.log('Server running at http://localhost:3006');
+});
