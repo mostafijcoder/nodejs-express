@@ -1,52 +1,23 @@
 const http = require('http');
-const fs = require('fs');
-const path = require('path');
+const connect = require('connect');
+const util = require('util');
 
-function send404Response(res) {
-    res.writeHead(404, { "Content-Type": "text/plain" });
-    res.write("Error 404: Page not found!");
-    res.end();
+// Create a connect dispatcher (middleware handler)
+const app = connect();
+
+// Middleware: Logging function
+function logit(req, res, next) {
+    console.log(`Request received: ${req.method} ${req.url}`);
+    next(); // Call next middleware
 }
 
-const mimeLookup = {
-    '.js': 'application/javascript',
-    '.html': 'text/html',
-    '.css': 'text/css'
-};
+// Register middleware before starting the server
+app.use(logit);
 
-const server = http.createServer((req, res) => {
-    console.log('Request received:', req.url);
+// Create HTTP server with Connect app
+const server = http.createServer(app);
 
-    if (req.method === 'GET') {
-        let fileurl = req.url;
-        if (fileurl === '/') fileurl = '/index.html'; // Default file
-        let filepath = path.resolve(__dirname, 'public' + fileurl); // Serve from "public" folder
-
-        let fileExt = path.extname(filepath);
-        let mimeType = mimeLookup[fileExt];
-
-        if (!mimeType) {
-            send404Response(res);
-            return;
-        }
-
-        // Check if file exists
-        fs.access(filepath, fs.constants.F_OK, (err) => {
-            if (err) {
-                console.log(`File not found: ${filepath}`);
-                send404Response(res);
-                return;
-            }
-
-            res.writeHead(200, { 'Content-Type': mimeType });
-            fs.createReadStream(filepath).pipe(res);
-        });
-    } else {
-        send404Response(res);
-    }
-});
-
-// Start server on port 3006
-server.listen(3006, () => {
-    console.log('Server running at http://localhost:3006');
+// Start server on port 3007
+server.listen(3008, () => {
+    console.log('Server running on port 3008');
 });
